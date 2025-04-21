@@ -1,16 +1,19 @@
 import random
 from collections import deque
+from math import ceil
 
 def game(n: int):
     grid = n*n
     players = deque(i for i in range(1, 4))
     pos_hist = {}
     roll_hist = {}
+    cart_history = {}
     winner = None
     
     for i in players:
         pos_hist[i] = []
         roll_hist[i] = []
+        cart_history[i] = []
     
     while players:
         current_player = players.popleft()
@@ -26,8 +29,13 @@ def game(n: int):
         
         if pos_hist[current_player]:
             for i in pos_hist:
-                if updated_position == pos_hist[i][-1]:
+                if i != current_player and pos_hist[i] and updated_position == pos_hist[i][-1]:
                     pos_hist[i].append(0)
+                    break
+        
+        x = ((updated_position%n) - 1) if updated_position % n != 0 else n-1
+        y = (ceil(updated_position/n))-1 
+        cart_history[current_player].append((x, y))
 
         if updated_position == grid:
             pos_hist[current_player].append(updated_position)
@@ -42,6 +50,7 @@ def game(n: int):
     
     print(roll_hist)
     print(pos_hist)
+    print(cart_history)
     print(f"Winner is: Player {winner}")
 
 
